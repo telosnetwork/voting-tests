@@ -97,9 +97,12 @@ def init_evm():
     return account, eth_addr, first_addr, second_addr
 
 def create_eosio_linked_address():
-    cleos.create_evm_account('eosio', random_string())
     native_eth_addr = cleos.eth_account_from_name('eosio')
-    return native_eth_addr
+    if native_eth_addr is None:
+        cleos.create_evm_account('eosio', random_string())
+        native_eth_addr = cleos.eth_account_from_name('eosio')
+
+    return cleos.w3.to_checksum_address(native_eth_addr)
 
 def deploy_erc20(owner_addr):
     # test erc20 contract deploy
