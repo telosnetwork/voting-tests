@@ -210,12 +210,13 @@ def update_system_contract(cleos):
     system_wasm_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.wasm'
     system_abi_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.abi'
 
-    system_wasm = open(system_wasm_path, 'rb').read()
-    system_abi = open(system_abi_path, 'r').read()
-    system_abi_json = json.loads(system_abi)
+    system_wasm = b''
+    with open(system_wasm_path, 'rb') as wasm_file:
+        system_wasm = wasm_file.read()
 
-    with open(system_abi_path, 'r') as abi_fp:
-        system_abi = json.load(abi_fp)
+    system_abi = None
+    with open(system_abi_path, 'rb') as abi_file:
+        system_abi = json.load(abi_file)
 
     # Check if it needs updated
     local_hash = sha256(system_wasm).hexdigest()
@@ -227,7 +228,7 @@ def update_system_contract(cleos):
     deploy_result = cleos.deploy_contract(
         "eosio",
         system_wasm,
-        system_abi_json,
+        system_abi,
         False,
         False
     )
