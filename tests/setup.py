@@ -225,6 +225,9 @@ def update_system_contract(cleos):
         print("System contract is up to date")
         return
 
+    abi_result = cleos.get_abi('eosio')
+    assert abi_result
+
     deploy_result = cleos.deploy_contract(
         "eosio",
         system_wasm,
@@ -234,3 +237,5 @@ def update_system_contract(cleos):
     )
 
     assert deploy_result
+    abi_result = cleos.get_abi('eosio')
+    assert abi_result

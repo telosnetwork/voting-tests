@@ -119,6 +119,15 @@ wheels = [
 ]
 
 [[package]]
+name = "bidict"
+version = "0.23.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9a/6e/026678aa5a830e07cd9498a05d3e7e650a4f56a42f267a53d22bcda1bdc9/bidict-0.23.1.tar.gz", hash = "sha256:03069d763bc387bbd20e7d49914e75fc4132a41937fa3405417e1a5a2d006d71", size = 29093 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/37/e8730c3587a65eb5645d4aba2d27aae48e8003614d6aaf15dda67f702f1f/bidict-0.23.1-py3-none-any.whl", hash = "sha256:5dae8d4d79b552a71cbabc7deb25dfe8ce710b17ff41711e13010ead2abfc3e5", size = 32764 },
+]
+
+[[package]]
 name = "bitarray"
 version = "3.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -517,7 +526,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "docker", specifier = ">=7.1.0" },
-    { name = "py-leap", git = "https://github.com/openrepublic/py-leap.git?rev=v0.1a39" },
+    { name = "py-leap", git = "https://github.com/openrepublic/py-leap.git?rev=v0.1a40" },
     { name = "requests", specifier = "<2.32.0" },
     { name = "rlp", specifier = "==3.0.0" },
     { name = "web3", specifier = ">=6.19.0,<7" },
@@ -975,15 +984,15 @@ wheels = [
 
 [[package]]
 name = "py-leap"
-version = "0.1a39"
-source = { git = "https://github.com/openrepublic/py-leap.git?rev=v0.1a39#99d009271d6d4de05033b08b96a24a147c154eec" }
+version = "0.1a40"
+source = { git = "https://github.com/openrepublic/py-leap.git?rev=v0.1a40#ef98f3a1caac8fc68ae1ae2e0b8df504a6db9cb4" }
 dependencies = [
     { name = "httpx" },
     { name = "msgspec" },
-    { name = "pyo3-antelope-rs", version = "0.5.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_10_12_x86_64.whl" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
-    { name = "pyo3-antelope-rs", version = "0.5.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_11_0_arm64.whl" }, marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
-    { name = "pyo3-antelope-rs", version = "0.5.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-manylinux_2_34_x86_64.whl" }, marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
-    { name = "pyo3-antelope-rs", version = "0.5.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-win_amd64.whl" }, marker = "platform_machine == 'AMD64' and sys_platform == 'win32'" },
+    { name = "pyo3-antelope-rs", version = "0.8.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_10_12_x86_64.whl" }, marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
+    { name = "pyo3-antelope-rs", version = "0.8.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_11_0_arm64.whl" }, marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
+    { name = "pyo3-antelope-rs", version = "0.8.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-manylinux_2_34_x86_64.whl" }, marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
+    { name = "pyo3-antelope-rs", version = "0.8.0", source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-win_amd64.whl" }, marker = "platform_machine == 'AMD64' and sys_platform == 'win32'" },
     { name = "requests" },
     { name = "tractor", marker = "sys_platform == 'linux'" },
     { name = "trio-websocket" },
@@ -1028,8 +1037,8 @@ wheels = [
 
 [[package]]
 name = "pyo3-antelope-rs"
-version = "0.5.0"
-source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_10_12_x86_64.whl" }
+version = "0.8.0"
+source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_10_12_x86_64.whl" }
 resolution-markers = [
     "platform_machine == 'x86_64' and sys_platform == 'darwin'",
 ]
@@ -1037,7 +1046,7 @@ dependencies = [
     { name = "maturin", marker = "platform_machine == 'x86_64' and sys_platform == 'darwin'" },
 ]
 wheels = [
-    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:3b69cab34bd5a1bdef2ba7e9e0b2902f308975ce3ae60ab0ce663c02f204eb34" },
+    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_10_12_x86_64.whl", hash = "sha256:720f5ba1ed460638a245a77b4573331b4225d93bdf22616c3c76de71fb728fd8" },
 ]
 
 [package.metadata]
@@ -1045,8 +1054,8 @@ requires-dist = [{ name = "maturin", specifier = ">=1.8.2" }]
 
 [[package]]
 name = "pyo3-antelope-rs"
-version = "0.5.0"
-source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_11_0_arm64.whl" }
+version = "0.8.0"
+source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_11_0_arm64.whl" }
 resolution-markers = [
     "platform_machine == 'arm64' and sys_platform == 'darwin'",
 ]
@@ -1054,7 +1063,7 @@ dependencies = [
     { name = "maturin", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'" },
 ]
 wheels = [
-    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:a9968384100de2b7d8aa2c8aa8e5839de0f55787e8a6645531ada1ff07aacfe2" },
+    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:6c3cb819187c41a4c2b5b7dec0b1340c7ba5332ef3904d930824c3df086e9b43" },
 ]
 
 [package.metadata]
@@ -1062,8 +1071,8 @@ requires-dist = [{ name = "maturin", specifier = ">=1.8.2" }]
 
 [[package]]
 name = "pyo3-antelope-rs"
-version = "0.5.0"
-source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-manylinux_2_34_x86_64.whl" }
+version = "0.8.0"
+source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-manylinux_2_34_x86_64.whl" }
 resolution-markers = [
     "platform_machine == 'x86_64' and sys_platform == 'linux'",
 ]
@@ -1071,7 +1080,7 @@ dependencies = [
     { name = "maturin", marker = "platform_machine == 'x86_64' and sys_platform == 'linux'" },
 ]
 wheels = [
-    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:fb2d7f0e6f4fe0982b90e5cd6c5b3f7abeccc452fb1f0acef493fb48df78892b" },
+    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-manylinux_2_34_x86_64.whl", hash = "sha256:3295d7f1041a37a99ae8c0e79d45853b6f77d7013d9abda4ae761bd07dc25911" },
 ]
 
 [package.metadata]
@@ -1079,8 +1088,8 @@ requires-dist = [{ name = "maturin", specifier = ">=1.8.2" }]
 
 [[package]]
 name = "pyo3-antelope-rs"
-version = "0.5.0"
-source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-win_amd64.whl" }
+version = "0.8.0"
+source = { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-win_amd64.whl" }
 resolution-markers = [
     "platform_machine == 'AMD64' and sys_platform == 'win32'",
 ]
@@ -1088,7 +1097,7 @@ dependencies = [
     { name = "maturin", marker = "platform_machine == 'AMD64' and sys_platform == 'win32'" },
 ]
 wheels = [
-    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.5.0/pyo3_antelope_rs-0.5.0-cp39-abi3-win_amd64.whl", hash = "sha256:06f561163169b99399bf0df5af953e868f30dd76b8db97de6ac6fe1d5d4fe0a6" },
+    { url = "https://github.com/openrepublic/pyo3-antelope-rs/releases/download/v0.8.0/pyo3_antelope_rs-0.8.0-cp39-abi3-win_amd64.whl", hash = "sha256:6ef43394619f2d34157a7c9c975f1bc81e31b25d4e73bb8abcc0e43e9a57b355" },
 ]
 
 [package.metadata]
@@ -1350,8 +1359,9 @@ wheels = [
 [[package]]
 name = "tractor"
 version = "0.1.0a6.dev0"
-source = { git = "https://pikers.dev/goodboy/tractor.git?rev=ring-latest#8f400f6524212aa0ca179353a61e07722113250b" }
+source = { git = "https://pikers.dev/goodboy/tractor.git?rev=053078ce8fd52284d767b200e77bb2bd23b5c812#053078ce8fd52284d767b200e77bb2bd23b5c812" }
 dependencies = [
+    { name = "bidict", marker = "(platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'AMD64' and sys_platform == 'win32') or (sys_platform != 'darwin' and sys_platform != 'win32')" },
     { name = "cffi", marker = "(platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'AMD64' and sys_platform == 'win32') or (sys_platform != 'darwin' and sys_platform != 'win32')" },
     { name = "colorlog", marker = "(platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'AMD64' and sys_platform == 'win32') or (sys_platform != 'darwin' and sys_platform != 'win32')" },
     { name = "msgspec", marker = "(platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (platform_machine != 'AMD64' and sys_platform == 'win32') or (sys_platform != 'darwin' and sys_platform != 'win32')" },

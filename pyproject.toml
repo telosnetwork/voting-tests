@@ -23,7 +23,7 @@ dev = [
 [tool.uv]
 
 [tool.uv.sources]
-py-leap = { git = "https://github.com/openrepublic/py-leap.git", rev = "v0.1a39" }
+py-leap = { git = "https://github.com/openrepublic/py-leap.git", rev = "v0.1a40" }
 
 [tool.hatch.build.targets.sdist]
 include = ["src/tevmtest"]
