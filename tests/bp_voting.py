@@ -21,6 +21,7 @@ def bp_voting(cleos, native_account, first_address, second_address, erc20_contra
     """
     print("\nStarting BP voting test...")
     create_and_register(cleos)
+    sync_bp_status(cleos)
 
 def create_and_register(cleos):
     signing_key = 'EOS5GnobZ231eekYUJHGTcmy2qve1K23r5jSFQbMfwWTtPB7mFZ1L'
@@ -34,3 +35,12 @@ def create_and_register(cleos):
             cleos.new_account(bp_name)
 
         cleos.register_producer(bp_name, signing_key)
+
+def sync_bp_status(cleos):
+    return
+    # TODO: Implement the action on eosio contract to sync the active/inactive status of a specific block producer
+    #  into the EVM.
+    #
+    #  Then call that action for each producer here, so all producers are synced.
+    #
+    #  Then unregister a producer, sync it and check that the status is updated in the EVM.
