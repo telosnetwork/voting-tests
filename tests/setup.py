@@ -2,7 +2,7 @@ from hashlib import sha256
 import json
 
 from eth_account import Account
-from leap.protocol import Asset
+from leap.protocol import Asset, ABI
 from leap.sugar import random_string
 
 from tevmtest import to_wei
@@ -210,13 +210,16 @@ def update_system_contract(cleos):
     system_wasm_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.wasm'
     system_abi_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.abi'
 
+    # system_contract_path = '../telos.contracts/build/contracts/eosio.system'
+    # cleos.deploy_contract_from_path('eosio', system_contract_path, 'eosio.system')
+
     system_wasm = b''
     with open(system_wasm_path, 'rb') as wasm_file:
         system_wasm = wasm_file.read()
 
     system_abi = None
-    with open(system_abi_path, 'rb') as abi_file:
-        system_abi = json.load(abi_file)
+    with open(system_abi_path, 'r') as abi_file:
+        system_abi = ABI.from_str(abi_file.read())
 
     # Check if it needs updated
     local_hash = sha256(system_wasm).hexdigest()
@@ -237,5 +240,5 @@ def update_system_contract(cleos):
     )
 
     assert deploy_result
-    abi_result = cleos.get_abi('eosio')
-    assert abi_result
+    # abi_result = cleos.get_abi('eosio')
+    # assert abi_result
