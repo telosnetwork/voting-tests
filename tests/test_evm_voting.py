@@ -1,6 +1,6 @@
-from tests.setup import init_evm, create_eosio_linked_address, deploy_erc20, deploy_stlos, deploy_vote_manager, \
+from setup import init_evm, create_eosio_linked_address, deploy_erc20, deploy_stlos, deploy_vote_manager, \
     update_system_contract
-from tests.bp_voting import bp_voting
+from bp_voting import bp_voting
 from tevmtest import CLEOSEVM
 
 def test_evm():

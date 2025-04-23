@@ -24,17 +24,23 @@ def bp_voting(cleos, native_account, first_address, second_address, erc20_contra
     sync_bp_status(cleos)
 
 def create_and_register(cleos):
-    signing_key = 'EOS5GnobZ231eekYUJHGTcmy2qve1K23r5jSFQbMfwWTtPB7mFZ1L'
     for bp_name in producers:
         print(f"Creating and registering {bp_name}...")
 
         try:
-            account = cleos.get_account(bp_name)
+            cleos.get_account(bp_name)
             print(f"Account {bp_name} already exists, skipping create...")
-        except ChainAPIError as e:
-            cleos.new_account(bp_name)
 
-        cleos.register_producer(bp_name, signing_key)
+        except ChainAPIError:
+            cleos.new_account(bp_name, key=cleos.keys['eosio'])
+            print(f"Account {bp_name} created")
+
+        cleos.register_producer(
+            bp_name,
+            pub_key=cleos.keys['eosio'],
+            key=cleos.private_keys['eosio'],
+        )
+        print(f"BP {bp_name} registered")
 
 def sync_bp_status(cleos):
     return
