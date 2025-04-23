@@ -11,7 +11,6 @@ def test_evm():
     except Exception as e:
         print(f"Error getting eosio account: {e}")
         raise e
-
     native_account, linked_address, eth_address1, eth_address2 = init_evm(cleos)
     eosio_evm_address = create_eosio_linked_address(cleos)
     print(f"Native account: {native_account} with linked address: {linked_address}")

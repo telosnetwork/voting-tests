@@ -210,35 +210,38 @@ def update_system_contract(cleos):
     system_wasm_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.wasm'
     system_abi_path = '../telos.contracts/build/contracts/eosio.system/eosio.system.abi'
 
-    # system_contract_path = '../telos.contracts/build/contracts/eosio.system'
-    # cleos.deploy_contract_from_path('eosio', system_contract_path, 'eosio.system')
-
-    system_wasm = b''
-    with open(system_wasm_path, 'rb') as wasm_file:
-        system_wasm = wasm_file.read()
-
-    system_abi = None
-    with open(system_abi_path, 'r') as abi_file:
-        system_abi = ABI.from_str(abi_file.read())
-
-    # Check if it needs updated
-    local_hash = sha256(system_wasm).hexdigest()
-    remote_hash, remote_bytes = cleos.get_code('eosio')
-    if local_hash == remote_hash:
-        print("System contract is up to date")
-        return
-
-    abi_result = cleos.get_abi('eosio')
-    assert abi_result
-
-    deploy_result = cleos.deploy_contract(
-        "eosio",
-        system_wasm,
-        system_abi,
-        False,
-        False
-    )
-
-    assert deploy_result
+    system_contract_path = '../telos.contracts/build/contracts/eosio.system'
+    cleos.deploy_contract_from_path('eosio', system_contract_path, 'eosio.system', create_account=False)
+    #
+    # system_wasm = b''
+    # with open(system_wasm_path, 'rb') as wasm_file:
+    #     system_wasm = wasm_file.read()
+    #
+    # system_abi = None
+    # with open(system_abi_path, 'r') as abi_file:
+    #     system_abi = ABI.from_str(abi_file.read())
+    #
+    # # Check if it needs updated
+    # local_hash = sha256(system_wasm).hexdigest()
+    # remote_hash, remote_bytes = cleos.get_code('eosio')
+    # if local_hash == remote_hash:
+    #     print("System contract is up to date")
+    #     return
+    #
     # abi_result = cleos.get_abi('eosio')
     # assert abi_result
+    #
+    # deploy_result = cleos.deploy_contract(
+    #     "eosio",
+    #     system_wasm,
+    #     system_abi,
+    #     False,
+    #     False
+    # )
+    #
+    # assert deploy_result
+    try:
+        abi_result = cleos.get_abi('eosio')
+    except Exception as e:
+        print(e)
+    assert abi_result
