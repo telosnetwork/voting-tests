@@ -9,6 +9,8 @@ from setup import DEFAULT_GAS_PRICE
 from tevmtest import to_wei
 from eth_abi import encode
 
+from tevmtest.utils import s2n
+
 producers = [
     "bp1",  "bp2",  "bp3",  "bp4",  "bp5",
     "bp11", "bp12", "bp13", "bp14", "bp15",
@@ -76,7 +78,9 @@ def register_bp_evm(cleos, deployer_addr, manager_contract, producer):
 def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_contract, manager_contract):
     stake_erc20(cleos, first_address, erc20_contract, stlos_contract, manager_contract, to_wei(1000, 'ether'))
     print(f"Staked 1000 STLOS for {first_address}")
-    # vote_fn = manager_contract.functions.vote()
+    vote(cleos, first_address, manager_contract, [s2n(x) for x in producers[:30]])
+    print(f"Voted for {first_address} with producers: {producers[:30]}")
+
 
 def stake_erc20(cleos, eth_address, erc20_contract, stlos_contract, manager_contract, amount):
     starting_stlos_balance = stlos_contract.functions.balanceOf(eth_address.address).call()
@@ -100,3 +104,15 @@ def stake_erc20(cleos, eth_address, erc20_contract, stlos_contract, manager_cont
 
     staked_balance = manager_contract.functions.userStakedBalance(eth_address.address).call()
     print(f"Staked {amount} STLOS for {eth_address.address}, staked balance is {staked_balance}")
+
+def vote(cleos, first_address, manager_contract, producer_names):
+    before_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
+    print(f"Making vote for {first_address}...")
+    vote_fn = manager_contract.functions.vote(sorted(producer_names))
+    vote_receipt = cleos.eth_build_and_send_transaction(vote_fn, first_address, 4000000, DEFAULT_GAS_PRICE)
+    after_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
+    assert before_first_bp_votes < after_first_bp_votes
+    print(f"Vote receipt: {vote_receipt}")
+
+
+

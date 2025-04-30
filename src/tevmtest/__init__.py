@@ -545,7 +545,7 @@ class CLEOSEVM(CLEOS):
         signed_trx = Account.sign_transaction(trx, eth_address.key)
         tx_hash = self.w3.eth.send_raw_transaction(signed_trx.raw_transaction)
         receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
-        self.wait_evm_block(receipt['blockNumber'] + 1)
+        # self.wait_evm_block(receipt['blockNumber'] + 1)
         if check_for_success and receipt['status'] != 1:
             raise Exception(f"Transaction failed: {tx_hash.hex()}")
 

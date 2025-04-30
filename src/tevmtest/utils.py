@@ -3,6 +3,7 @@ import time
 import decimal
 import binascii
 import subprocess
+from antelope_rs.antelope_rs import Name
 
 from decimal import localcontext
 from typing import (
@@ -283,3 +284,13 @@ def is_hex(value: Any) -> bool:
     if not value:
         return False
     return _HEX_REGEXP.fullmatch(value) is not None
+
+def s2n(value: str) -> int:
+    """
+    Convert a string to an integer.
+    """
+    if not isinstance(value, str):
+        raise TypeError("Value must be a string")
+
+    n = Name.from_str(value)
+    return n.value()
