@@ -9,4 +9,4 @@ Usage:
 
     uv venv .venv
     uv sync
-    uv run pytest tests/test_example.py
+    uv run pytest tests/test_evm_voting.py

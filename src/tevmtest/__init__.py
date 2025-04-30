@@ -463,7 +463,7 @@ class CLEOSEVM(CLEOS):
 
         signed_tx = account.sign_transaction(tx)
 
-        tx_hash = self._w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        tx_hash = self._w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
         tx_receipt = self._w3.eth.wait_for_transaction_receipt(tx_hash)
 
@@ -531,3 +531,22 @@ class CLEOSEVM(CLEOS):
             account=account,
             max_gas=max_gas
         )
+
+    def eth_build_and_send_transaction(self, function_call, eth_address, gas, gas_price, check_for_success=True):
+        tx_args = {
+            'from': eth_address.address,
+            'gas': gas,
+            'gasPrice': gas_price,
+            'nonce': self.w3.eth.get_transaction_count(eth_address.address),
+            'chainId': self.evm_chain_id
+        }
+
+        trx = function_call.build_transaction(tx_args)
+        signed_trx = Account.sign_transaction(trx, eth_address.key)
+        tx_hash = self.w3.eth.send_raw_transaction(signed_trx.raw_transaction)
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+        self.wait_evm_block(receipt['blockNumber'] + 1)
+        if check_for_success and receipt['status'] != 1:
+            raise Exception(f"Transaction failed: {tx_hash.hex()}")
+
+        return receipt

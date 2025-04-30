@@ -57,7 +57,7 @@ def init_evm(cleos):
 
     # test actually tx send & fetch receipt
     signed_tx = Account.sign_transaction(tx_params, first_addr.key)
-    tx_hash = cleos.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+    tx_hash = cleos.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
     receipt = cleos.w3.eth.wait_for_transaction_receipt(tx_hash)
     assert receipt
 
@@ -116,7 +116,7 @@ def deploy_erc20(cleos, owner_addr):
     ).build_transaction(tx_args)
     signed_tx = Account.sign_transaction(erc20_tx, owner_addr.key)
 
-    tx_hash = cleos.w3.eth.send_raw_transaction(signed_tx.rawTransaction)
+    tx_hash = cleos.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
     assert erc20_contract.functions.totalSupply().call() == supply
     return erc20_contract
@@ -153,7 +153,7 @@ def deploy_stlos(cleos, owner_addr, erc20_contract):
     return stlos_contract
 
 
-def deploy_vote_manager(cleos, deployer_addr, eosio_addr, stlos_contract):
+def deploy_vote_manager(cleos, deployer_addr, stlos_contract):
     name = 'BPVoteManager'
     manager_json_path = '../evm-voting/out/BPVoteManager.sol/BPVoteManager.json'
     with open(manager_json_path, 'r') as manager_fp:
@@ -179,6 +179,9 @@ def deploy_vote_manager(cleos, deployer_addr, eosio_addr, stlos_contract):
 
     assert manager_contract.functions.stlosVault().call() == stlos_contract.address
 
+    return manager_contract
+
+def set_evm_owner(cleos, manager_contract, deployer_addr, eosio_addr):
     # Set eosio EVM address as owner
     transfer_ownership_nonce = cleos.w3.eth.get_transaction_count(deployer_addr.address)
 
@@ -196,18 +199,15 @@ def deploy_vote_manager(cleos, deployer_addr, eosio_addr, stlos_contract):
 
     transfer_ownership_signed_trx = Account.sign_transaction(transfer_ownership_trx, deployer_addr.key)
 
-    transfer_ownership_tx_hash = cleos.w3.eth.send_raw_transaction(transfer_ownership_signed_trx.rawTransaction)
+    transfer_ownership_tx_hash = cleos.w3.eth.send_raw_transaction(transfer_ownership_signed_trx.raw_transaction)
     transfer_ownership_receipt = cleos.w3.eth.wait_for_transaction_receipt(transfer_ownership_tx_hash)
 
     cleos.wait_evm_block(transfer_ownership_receipt['blockNumber'] + 3)
 
     # Verify the owner is set correctly
     assert manager_contract.functions.owner().call() == eosio_addr
-    return manager_contract
-
 
 def update_system_contract(cleos):
-
     abi_result = cleos.get_abi('eosio')
     assert abi_result
 
