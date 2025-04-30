@@ -21,6 +21,14 @@ def init_evm(cleos):
     # Test chain ID
     assert cleos.w3.eth.chain_id == cleos.evm_chain_id
 
+    # Redeploy EVM contract to ensure debug is not enabled as that will crash translator if there is a revert
+    deploy_result = cleos.deploy_contract_from_path(
+        'eosio.evm',
+        './tests/contracts/eosio.evm/regular',
+        privileged=False,
+        create_account=False
+    )
+
     # Test transaction count
     account = cleos.new_account()
     cleos.create_evm_account(account, random_string())

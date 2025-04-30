@@ -105,14 +105,13 @@ def stake_erc20(cleos, eth_address, erc20_contract, stlos_contract, manager_cont
     staked_balance = manager_contract.functions.userStakedBalance(eth_address.address).call()
     print(f"Staked {amount} STLOS for {eth_address.address}, staked balance is {staked_balance}")
 
-def vote(cleos, first_address, manager_contract, producer_names):
+def vote(cleos, address, manager_contract, producer_names):
     before_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
-    print(f"Making vote for {first_address}...")
+    print(f"Making vote for {address}...")
     vote_fn = manager_contract.functions.vote(sorted(producer_names))
-    vote_receipt = cleos.eth_build_and_send_transaction(vote_fn, first_address, 4000000, DEFAULT_GAS_PRICE)
+    vote_receipt = cleos.eth_build_and_send_transaction(vote_fn, address, 4000000, DEFAULT_GAS_PRICE)
     after_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
     assert before_first_bp_votes < after_first_bp_votes
     print(f"Vote receipt: {vote_receipt}")
-
 
 
