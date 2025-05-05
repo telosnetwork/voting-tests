@@ -42,7 +42,7 @@ def test_evm():
     second_addr = Account.create()
     cleos.transfer_token('eosio', account, Asset.from_str('20000000.0000 TLOS'), 'evm test')
     cleos.transfer_token(account, 'eosio.evm', Asset.from_str('10000000.0000 TLOS'), 'Deposit')
-    cleos.eth_transfer(native_eth_addr, first_addr.address, Asset.from_str('9000000.0000 TLOS'), account=account)
+    cleos.eth_transfer_via_native(native_eth_addr, first_addr.address, Asset.from_str('9000000.0000 TLOS'), account=account)
 
     cleos.wait_evm_blocks(1)
 

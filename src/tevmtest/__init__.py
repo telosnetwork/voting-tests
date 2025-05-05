@@ -194,7 +194,7 @@ class CLEOSEVM(CLEOS):
         self.logger.info(f'{name}: {eth_addr}')
 
         for addr, amount in addr_amount_pairs:
-            self.eth_transfer(
+            self.eth_transfer_via_native(
                 eth_addr,
                 addr,
                 Asset.from_ints(amount * (10 ** 4), 4, 'TLOS'),
@@ -360,7 +360,7 @@ class CLEOSEVM(CLEOS):
 
         return tx.encode()
 
-    def eth_transfer(
+    def eth_transfer_via_native(
         self,
         sender: str,  # eth addr
         to: str,  # eth addr
@@ -550,3 +550,21 @@ class CLEOSEVM(CLEOS):
             raise Exception(f"Transaction failed: {tx_hash.hex()}")
 
         return receipt
+
+    def eth_transfer(self, sender, to, wei):
+        tx_args = {
+            'from': sender.address,
+            'gas': 21000,
+            'gasPrice': DEFAULT_GAS_PRICE,
+            'nonce': self.w3.eth.get_transaction_count(sender.address),
+            'chainId': self.evm_chain_id,
+            'value': wei
+        }
+
+        transfer_signed_trx = Account.sign_transaction(tx_args, sender.key)
+        transfer_tx_hash = self.w3.eth.send_raw_transaction(transfer_signed_trx.raw_transaction)
+        transfer_receipt = self.w3.eth.wait_for_transaction_receipt(transfer_tx_hash)
+        if transfer_receipt['status'] != 1:
+            raise Exception(f"Transaction failed: {transfer_tx_hash.hex()}")
+
+        return transfer_receipt

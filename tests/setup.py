@@ -20,14 +20,23 @@ def init_evm(cleos):
 
     # Test chain ID
     assert cleos.w3.eth.chain_id == cleos.evm_chain_id
+    evm_contract_dir = './tests/contracts/eosio.evm/regular'
 
-    # Redeploy EVM contract to ensure debug is not enabled as that will crash translator if there is a revert
-    deploy_result = cleos.deploy_contract_from_path(
-        'eosio.evm',
-        './tests/contracts/eosio.evm/regular',
-        privileged=False,
-        create_account=False
-    )
+    with open(evm_contract_dir + '/regular.wasm', 'rb') as wasm_file:
+        evm_wasm = wasm_file.read()
+
+    local_hash = sha256(evm_wasm).hexdigest()
+    remote_hash, remote_bytes = cleos.get_code('eosio.evm')
+    if local_hash == remote_hash:
+        print("System contract is up to date")
+    else:
+        # Redeploy EVM contract to ensure debug is not enabled as that will crash translator if there is a revert
+        deploy_result = cleos.deploy_contract_from_path(
+            'eosio.evm',
+            evm_contract_dir,
+            privileged=False,
+            create_account=False
+        )
 
     # Test transaction count
     account = cleos.new_account()
@@ -47,7 +56,7 @@ def init_evm(cleos):
     second_addr = Account.create()
     cleos.transfer_token('eosio', account, Asset.from_str('20000000.0000 TLOS'), 'evm test')
     cleos.transfer_token(account, 'eosio.evm', Asset.from_str('10000000.0000 TLOS'), 'Deposit')
-    cleos.eth_transfer(native_eth_addr, first_addr.address, Asset.from_str('9000000.0000 TLOS'), account=account)
+    cleos.eth_transfer_via_native(native_eth_addr, first_addr.address, Asset.from_str('9000000.0000 TLOS'), account=account)
 
     cleos.wait_evm_blocks(1)
 
