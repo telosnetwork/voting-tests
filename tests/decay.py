@@ -32,7 +32,7 @@ def create_voters(cleos, native_funder, evm_funder, erc20_contract, stlos_contra
     # Stake TLOS on native side to vote with
     half_amount = str(amount / 2).split('.')[0]
     resource_amount = Asset.from_str(f"{half_amount}.0000 TLOS")
-    cleos.delegate_bandwidth(native_account, native_account, resource_amount, resource_amount)
+    cleos.delegate_bandwidth(native_account, native_account, resource_amount, resource_amount, False)
 
     # Transfer TLOS for some gas
     cleos.eth_transfer(

@@ -3,6 +3,7 @@ import json
 
 from eth_account import Account
 from leap.protocol import Asset, ABI
+from leap.errors import ChainAPIError
 from leap.sugar import random_string
 
 from tevmtest import to_wei
@@ -38,7 +39,12 @@ def init_evm(cleos):
             create_account=False
         )
 
-    # Test transaction count
+    # Need to create this for delegatebw to work
+    try:
+        cleos.get_account('telos.decide')
+    except ChainAPIError:
+        cleos.new_account('telos.decide', key=cleos.keys['eosio'])
+
     account = cleos.new_account()
     cleos.create_evm_account(account, random_string())
     eth_addr = cleos.eth_account_from_name(account)

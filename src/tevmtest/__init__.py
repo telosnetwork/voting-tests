@@ -554,7 +554,7 @@ class CLEOSEVM(CLEOS):
     def eth_transfer(self, sender, to, wei):
         tx_args = {
             'from': sender.address,
-            'gas': 21000,
+            'gas': 50000,
             'gasPrice': DEFAULT_GAS_PRICE,
             'nonce': self.w3.eth.get_transaction_count(sender.address),
             'chainId': self.evm_chain_id,
@@ -568,3 +568,26 @@ class CLEOSEVM(CLEOS):
             raise Exception(f"Transaction failed: {transfer_tx_hash.hex()}")
 
         return transfer_receipt
+
+    def delegate_bandwidth(
+            self,
+            _from: str,
+            _to: str,
+            net: str,
+            cpu: str,
+            transfer: bool = True
+    ):
+        return self.push_action(
+            'eosio',
+            'delegatebw',
+            [
+                _from,
+                _to,
+                net,
+                cpu,
+                transfer
+            ],
+            _from,
+            self.get_private_key(_from),
+            'active'
+        )
