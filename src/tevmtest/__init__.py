@@ -554,7 +554,8 @@ class CLEOSEVM(CLEOS):
     def eth_transfer(self, sender, to, wei):
         tx_args = {
             'from': sender.address,
-            'gas': 50000,
+            'to': to,
+            'gas': 80000,
             'gasPrice': DEFAULT_GAS_PRICE,
             'nonce': self.w3.eth.get_transaction_count(sender.address),
             'chainId': self.evm_chain_id,

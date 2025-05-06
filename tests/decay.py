@@ -44,7 +44,7 @@ def create_voters(cleos, native_funder, evm_funder, erc20_contract, stlos_contra
     amount_wei = to_wei(amount, 'ether')
     cleos.eth_build_and_send_transaction(
         erc20_contract.functions.transfer(evm_address.address, amount_wei),
-        evm_address,
+        evm_funder,
         100000,
         DEFAULT_GAS_PRICE
     )
