@@ -91,3 +91,7 @@ def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_co
 
     vote_evm(cleos, first_address, manager_contract, [])
 
+    for producer in producers[:30]:
+        vote_weight = manager_contract.functions.totalVotes(s2n(producer)).call()
+        assert vote_weight == 0, f"Vote weight for {producer} is not 0 after voting"
+
