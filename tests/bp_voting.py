@@ -82,5 +82,12 @@ def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_co
     stake_erc20(cleos, first_address, erc20_contract, stlos_contract, manager_contract, to_wei(1000, 'ether'))
     cleos.logger.info(f"Staked 1000 STLOS for {first_address}")
     vote_evm(cleos, first_address, manager_contract, [s2n(x) for x in producers[:30]])
-    cleos.logger.info(f"Voted for {first_address} with producers: {producers[:30]}")
+    cleos.logger.info(f"Voted with {first_address} for producers: {producers[:30]}")
+    for producer in producers[:30]:
+        vote_weight = manager_contract.functions.totalVotes(s2n(producer)).call()
+        assert vote_weight > 0, f"Vote weight for {producer} is 0 after voting"
+
+    # TODO: Increase value of STLOS, refresh vote and check that the vote weight is updated
+
+    vote_evm(cleos, first_address, manager_contract, [])
 

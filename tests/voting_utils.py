@@ -42,17 +42,13 @@ def stake_erc20(cleos, eth_address, erc20_contract, stlos_contract, manager_cont
     cleos.logger.info(f"Staked {amount} STLOS for {eth_address.address}, staked balance is {staked_balance}")
 
 def vote_evm(cleos, address, manager_contract, producer_names):
-    before_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
     cleos.logger.info(f"Making vote for {address}...")
     vote_receipt = cleos.eth_build_and_send_transaction(
-        # manager_contract.functions.vote(sorted(producer_names)),
-        manager_contract.functions.vote([producer_names[0]]),
+        manager_contract.functions.vote(sorted(producer_names)),
         address,
         4000000,
         DEFAULT_GAS_PRICE
     )
-    after_first_bp_votes = manager_contract.functions.totalVotes(producer_names[0]).call()
-    assert before_first_bp_votes < after_first_bp_votes
     cleos.logger.info(f"Vote receipt: {vote_receipt}")
 
 def vote_native(cleos, account, producer_names):
