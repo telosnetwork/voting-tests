@@ -1,5 +1,6 @@
 from hashlib import sha256
 import json
+from time import sleep
 
 from eth_account import Account
 from leap.protocol import Asset, ABI
@@ -29,7 +30,7 @@ def init_evm(cleos):
     local_hash = sha256(evm_wasm).hexdigest()
     remote_hash, remote_bytes = cleos.get_code('eosio.evm')
     if local_hash == remote_hash:
-        print("System contract is up to date")
+        cleos.logger.info("System contract is up to date")
     else:
         # Redeploy EVM contract to ensure debug is not enabled as that will crash translator if there is a revert
         deploy_result = cleos.deploy_contract_from_path(
@@ -46,6 +47,7 @@ def init_evm(cleos):
         cleos.new_account('telos.decide', key=cleos.keys['eosio'])
 
     account = cleos.new_account()
+    sleep(3)
     cleos.create_evm_account(account, random_string())
     eth_addr = cleos.eth_account_from_name(account)
     assert eth_addr
@@ -242,7 +244,7 @@ def update_system_contract(cleos):
     local_hash = sha256(system_wasm).hexdigest()
     remote_hash, remote_bytes = cleos.get_code('eosio')
     if local_hash == remote_hash:
-        print("System contract is up to date")
+        cleos.logger.info("System contract is up to date")
         return
 
     cleos.deploy_contract_from_path(

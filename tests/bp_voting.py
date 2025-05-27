@@ -6,24 +6,10 @@ from leap.errors import ChainAPIError
 
 from setup import DEFAULT_GAS_PRICE
 from decay import check_decay
-from tests.voting_utils import stake_erc20, vote_evm
+from tests.voting_utils import deposit_and_stake_erc20, vote_evm, producers, unstake_erc20
 from tevmtest import to_wei
 
 from tevmtest.utils import s2n
-
-producers = [
-    "bp1",  "bp2",  "bp3",  "bp4",  "bp5",
-    "bp11", "bp12", "bp13", "bp14", "bp15",
-    "bp21", "bp22", "bp23", "bp24", "bp25",
-    "bp31", "bp32", "bp33", "bp34", "bp35",
-    "bp41", "bp42", "bp43", "bp44", "bp45",
-    "bp51", "bp52", "bp53", "bp54", "bp55",
-    "bp111", "bp112", "bp113", "bp114", "bp115",
-    "bp121", "bp122", "bp123", "bp124", "bp125",
-    "bp131", "bp132", "bp133", "bp134", "bp135",
-    "bp141", "bp142", "bp143", "bp144", "bp145",
-    "bp151", "bp152", "bp153", "bp154", "bp155",
-]
 
 def bp_voting(cleos, native_account, first_address, second_address, erc20_contract, stlos_contract, manager_contract):
     """
@@ -78,8 +64,9 @@ def register_bp_evm(cleos, deployer_addr, manager_contract, producer):
     #  Then unregister a producer, sync it and check that the status is updated in the EVM.
 
 def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_contract, manager_contract):
+    vote_amount_eth = 1_000_000;
     cleos.logger.info("\nStarting EVM voting...")
-    stake_erc20(cleos, first_address, erc20_contract, stlos_contract, manager_contract, to_wei(1000, 'ether'))
+    deposit_and_stake_erc20(cleos, first_address, erc20_contract, stlos_contract, manager_contract, to_wei(vote_amount_eth, 'ether'))
     cleos.logger.info(f"Staked 1000 STLOS for {first_address}")
     vote_evm(cleos, first_address, manager_contract, [s2n(x) for x in producers[:30]])
     cleos.logger.info(f"Voted with {first_address} for producers: {producers[:30]}")
@@ -95,3 +82,10 @@ def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_co
         vote_weight = manager_contract.functions.totalVotes(s2n(producer)).call()
         assert vote_weight == 0, f"Vote weight for {producer} is not 0 after voting"
 
+    unstake_erc20(cleos, first_address, erc20_contract, stlos_contract, manager_contract, to_wei(vote_amount_eth, 'ether'))
+    cleos.logger.info(f"Unstaked 1000 STLOS for {first_address}")
+    stake_weight = manager_contract.functions.userStakedBalance(first_address.address).call()
+    assert stake_weight == 0, f"Stake weight for {first_address} is not 0 after unstaking"
+
+    user_vote = manager_contract.functions.userVotes(first_address.address).call()
+    assert user_vote[0] == 0, f"Vote weight for {first_address} is not 0 after voting for []"

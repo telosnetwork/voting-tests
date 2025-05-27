@@ -10,29 +10,29 @@ def test_evm():
     try:
         eosio_account = cleos.get_account("eosio")
     except Exception as e:
-        print(f"Error getting eosio account: {e}")
+        cleos.logger.info(f"Error getting eosio account: {e}")
         raise e
     native_account, linked_address, eth_address1, eth_address2 = init_evm(cleos)
     eosio_evm_address = create_eosio_linked_address(cleos)
-    print(f"Native account: {native_account} with linked address: {linked_address}")
-    print(f"ETH address 1: {eth_address1.address}")
-    print(f"ETH address 2: {eth_address2.address}")
+    cleos.logger.info(f"Native account: {native_account} with linked address: {linked_address}")
+    cleos.logger.info(f"ETH address 1: {eth_address1.address}")
+    cleos.logger.info(f"ETH address 2: {eth_address2.address}")
 
     erc20_contract = deploy_erc20(cleos, eth_address1)
-    print(f"erc20 contract address: {erc20_contract.address}")
+    cleos.logger.info(f"erc20 contract address: {erc20_contract.address}")
 
     stlos_contract = deploy_stlos(cleos, eth_address1, erc20_contract)
-    print(f"stlos contract address: {stlos_contract.address}")
+    cleos.logger.info(f"stlos contract address: {stlos_contract.address}")
 
     manager_contract = deploy_vote_manager(cleos, eth_address1, stlos_contract)
-    print(f"manager contract address: {manager_contract.address}")
+    cleos.logger.info(f"manager contract address: {manager_contract.address}")
 
     # TODO: Uncomment this once we can sync BPs to EVM via eosio contract
     # set_evm_owner(cleos, manager_contract, eth_address1, eosio_evm_address)
-    # print(f"Set EVM owner to {eosio_evm_address}")
+    # cleos.logger.info(f"Set EVM owner to {eosio_evm_address}")
 
     update_system_contract(cleos)
 
-    print("Setup complete, running tests...")
+    cleos.logger.info("Setup complete, running tests...")
 
     bp_voting(cleos, native_account, eth_address1, eth_address2, erc20_contract, stlos_contract, manager_contract)
