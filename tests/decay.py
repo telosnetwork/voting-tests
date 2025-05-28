@@ -1,3 +1,4 @@
+import time
 from antelope_rs.antelope_rs import Asset
 from eth_account import Account
 
@@ -19,10 +20,14 @@ def check_decay(cleos, native_funder, evm_funder, erc20_contract, stlos_contract
     vote(cleos, alice_evm, alice_native, manager_contract, producer_names)
     assert_bp_voteweight(cleos, manager_contract, producer_names, amount)
 
-    # Check that the votes are the same in both contracts
     # Set decay values to decay 15% per year, starting 1 yr + 1 day ago
-    # Vote for 30 producers in EVM with second account, same amount
-    # Vote for 30 producers in native with second account, same amount
+    set_decay(cleos, manager_contract)
+
+    # Vote for 30 producers in EVM and native with second account, same amount
+    vote(cleos, bob_evm, bob_native, manager_contract, producer_names)
+    assert_bp_voteweight(cleos, manager_contract, producer_names, amount * 1.15)
+
+
     # Check that the votes are the same in both contracts
     # Check that the votes of second account are greater than the first account from before decay values were set
     # Reset votes to 0
@@ -80,3 +85,19 @@ def vote(cleos, address, native_account, manager_contract, producer_names):
 
     vote_native(cleos, native_account, producer_names)
     cleos.logger.info(f"Voted with {native_account} for producers: {producer_names}")
+
+def set_decay(cleos, manager_contract):
+    start_time = int(time.time()) - (60 * 60 * 24 * 366)
+    yearly_decay = 15  # 15% decay per year
+
+    action_result = cleos.push_action(
+        'eosio',
+        'setvotedecay',
+        [start_time, yearly_decay],
+        'eosio',
+        key=cleos.private_keys['eosio']
+    )
+    cleos.logger.info(f"Set vote decay")
+    evm_start_time = manager_contract.functions.decayStartEpoch().call()
+    evm_yearly_decay = manager_contract.functions.decayIncreaseYearly().call()
+    assert evm_start_time == start_time, f"Expected decay start time {start_time}, got {evm_start_time}"

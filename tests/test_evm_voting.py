@@ -1,5 +1,5 @@
 from setup import init_evm, create_eosio_linked_address, deploy_erc20, deploy_stlos, deploy_vote_manager, \
-    update_system_contract, set_evm_owner
+    update_system_contract, set_evm_owner, set_vote_manager
 from bp_voting import bp_voting
 from tevmtest import CLEOSEVM
 
@@ -32,6 +32,8 @@ def test_evm():
     # cleos.logger.info(f"Set EVM owner to {eosio_evm_address}")
 
     update_system_contract(cleos)
+
+    set_vote_manager(cleos, manager_contract)
 
     cleos.logger.info("Setup complete, running tests...")
 

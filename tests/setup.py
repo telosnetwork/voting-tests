@@ -7,7 +7,7 @@ from leap.protocol import Asset, ABI
 from leap.errors import ChainAPIError
 from leap.sugar import random_string
 
-from tevmtest import to_wei
+from tevmtest import to_wei, remove_0x_prefix
 
 DEFAULT_GAS_PRICE = 524799638144
 DEFAULT_GAS = 21000
@@ -255,3 +255,19 @@ def update_system_contract(cleos):
     )
     abi_result = cleos.get_abi('eosio')
     assert abi_result
+    cleos.load_abi('eosio', abi_result)
+
+def set_vote_manager(cleos, manager_contract):
+    # Set the vote manager contract in the system contract
+    mgr_address = remove_0x_prefix(manager_contract.address)
+    # mgr_address = ('0' * (12 * 2)) + mgr_address
+    # mgr_address = bytes.fromhex(mgr_address)
+    cleos.push_action(
+        'eosio',
+        'setvotecontr',
+        [mgr_address],
+        'eosio',
+        key=cleos.private_keys['eosio']
+    )
+    cleos.logger.info(f"Set vote manager to {manager_contract.address}")
+    assert cleos.get_table_row('eosio', 'eosio', 'votingconfig')['rows'][0]['evm_voting_contract'] == manager_contract.address
