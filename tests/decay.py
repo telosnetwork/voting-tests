@@ -2,7 +2,7 @@ import time
 from antelope_rs.antelope_rs import Asset
 from eth_account import Account
 
-from tests.voting_utils import deposit_and_stake_erc20, vote_evm, vote_native, producers, stake_erc20, \
+from voting_utils import deposit_and_stake_erc20, vote_evm, vote_native, producers, stake_erc20, \
     assert_bp_voteweight
 from tevmtest import to_wei, DEFAULT_GAS_PRICE
 from tevmtest.utils import s2n
@@ -97,6 +97,7 @@ def set_decay(cleos, manager_contract):
         'eosio',
         key=cleos.private_keys['eosio']
     )
+    cleos.wait_evm_blocks(5)
     cleos.logger.info(f"Set vote decay")
     evm_start_time = manager_contract.functions.decayStartEpoch().call()
     evm_yearly_decay = manager_contract.functions.decayIncreaseYearly().call()

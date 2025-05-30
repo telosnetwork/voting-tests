@@ -1,5 +1,6 @@
 from hashlib import sha256
 import json
+from pathlib import Path
 from time import sleep
 
 from eth_account import Account
@@ -236,16 +237,19 @@ def update_system_contract(cleos):
     abi_result = cleos.get_abi('eosio')
     assert abi_result
 
-    system_contract_path = '../telos.contracts/build/contracts/eosio.system'
+    system_contract_path = Path('../telos.contracts/build/contracts/eosio.system')
 
-    with open(system_contract_path + '/eosio.system.wasm', 'rb') as wasm_file:
+    with open(system_contract_path / 'eosio.system.wasm', 'rb') as wasm_file:
         system_wasm = wasm_file.read()
 
     local_hash = sha256(system_wasm).hexdigest()
     remote_hash, remote_bytes = cleos.get_code('eosio')
     if local_hash == remote_hash:
+        cleos.load_abi_file('eosio', system_contract_path / 'eosio.system.abi')
         cleos.logger.info("System contract is up to date")
         return
+
+    cleos.get_account('eosio')
 
     cleos.deploy_contract_from_path(
         'eosio',
@@ -253,9 +257,11 @@ def update_system_contract(cleos):
         contract_name='eosio.system',
         create_account=False,
     )
-    abi_result = cleos.get_abi('eosio')
-    assert abi_result
-    cleos.load_abi('eosio', abi_result)
+
+    cleos.get_account('eosio')
+    # abi_result = cleos.get_abi('eosio')
+    # assert abi_result
+    # cleos.load_abi('eosio', abi_result)
 
 def set_vote_manager(cleos, manager_contract):
     # Set the vote manager contract in the system contract
@@ -270,4 +276,5 @@ def set_vote_manager(cleos, manager_contract):
         key=cleos.private_keys['eosio']
     )
     cleos.logger.info(f"Set vote manager to {manager_contract.address}")
-    assert cleos.get_table_row('eosio', 'eosio', 'votingconfig')['rows'][0]['evm_voting_contract'] == manager_contract.address
+    row = cleos.get_table('eosio', 'eosio', 'votingconfig')[0]
+    assert f'0x{row["evm_voting_contract"]}'== manager_contract.address.lower()

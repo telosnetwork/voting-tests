@@ -1,5 +1,4 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
     "version": "eosio::abi/1.2",
     "types": [],
     "structs": [
@@ -470,34 +469,36 @@
     "tables": [
         {
             "name": "account",
-            "type": "Account",
             "index_type": "i64",
             "key_names": [],
-            "key_types": []
+            "key_types": [],
+            "type": "Account"
         },
         {
             "name": "accountstate",
-            "type": "AccountState",
             "index_type": "i64",
             "key_names": [],
-            "key_types": []
+            "key_types": [],
+            "type": "AccountState"
         },
         {
             "name": "config",
-            "type": "config",
             "index_type": "i64",
             "key_names": [],
-            "key_types": []
+            "key_types": [],
+            "type": "config"
         },
         {
             "name": "resources",
-            "type": "resources",
             "index_type": "i64",
             "key_names": [],
-            "key_types": []
+            "key_types": [],
+            "type": "resources"
         }
     ],
     "ricardian_clauses": [],
+    "error_messages": [],
+    "abi_extensions": [],
     "variants": [],
     "action_results": []
 }

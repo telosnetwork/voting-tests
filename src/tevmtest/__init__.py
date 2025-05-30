@@ -75,8 +75,8 @@ class CLEOSEVM(CLEOS):
     def w3(self) -> Web3:
         return self._w3
 
-    @classmethod
-    def default(self) -> CLEOSEVM:
+    @staticmethod
+    def default() -> CLEOSEVM:
         cleos = CLEOSEVM(
             endpoint='http://127.0.0.1:8890',
             evm_endpoint='http://127.0.0.1:9545',
@@ -90,15 +90,38 @@ class CLEOSEVM(CLEOS):
 
         return cleos
 
+    @staticmethod
+    def from_cleos(other: CLEOS | CLEOSEVM) -> CLEOSEVM:
+        if isinstance(other, CLEOSEVM):
+            return other
+
+        cleos = CLEOSEVM.default()
+
+        for name in (
+            'endpoint',
+            'ship_endpoint',
+            'node_dir',
+            'keys',
+            'private_keys',
+            '_key_to_acc',
+        ):
+            setattr(cleos, name, getattr(other, name))
+
+        return cleos
+
+
     def deploy_evm(
         self,
-        contract_path,
+        contract_path: str | Path = Path('tests/contracts/eosio.evm/regular'),
+        contract_name: str = 'regular',
+        account_name: str = 'eosio.evm',
         start_bytes: int = 2684354560,
         start_cost: str = '21000.0000 TLOS',
         target_free: int = 2684354560,
-        min_buy: int = 20000,
+        min_buy: int = 0,
         fee_transfer_pct: int = 100,
-        gas_per_byte: int = 69
+        gas_per_byte: int = 69,
+        initial_revision: int = 0
     ):
         master_key = self.keys['eosio']
 
@@ -124,16 +147,25 @@ class CLEOSEVM(CLEOS):
             net='10000.0000 TLOS',
             ram=100000)
 
-        self.create_snapshot({})
+        # self.create_snapshot({})
+        target_deploy_block = 58
+        self.wait_block(target_deploy_block - 3, interval=0.05)
 
         self.logger.info('deploying evm contract')
 
         self.evm_deploy_info = self.deploy_contract_from_path(
-            'eosio.evm',
-            contract_path,
+            account_name=account_name,
+            contract_path=contract_path,
+            contract_name=contract_name,
             privileged=True,
             create_account=False
         )
+
+        actual_deploy_block = self.evm_deploy_info['processed']['block_num']
+        if actual_deploy_block != target_deploy_block:
+            raise ValueError(
+                f'Contract failed to deploy at block {target_deploy_block}, actual: {actual_deploy_block}'
+            )
 
         self.evm_init_info = self.push_action(
             'eosio.evm',
@@ -149,8 +181,15 @@ class CLEOSEVM(CLEOS):
             'eosio.evm'
         )
 
-        self.push_action(
-            'eosio.evm', 'setrevision', [1], 'eosio.evm')
+        self.wait_blocks(1)
+
+        if initial_revision > 0:
+            self.push_action(
+                'eosio.evm', 'setrevision', [1], 'eosio.evm')
+
+        self.wait_blocks(1)
+
+        self.create_test_evm_account()
 
     def create_test_evm_account(
         self,

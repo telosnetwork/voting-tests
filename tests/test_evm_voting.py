@@ -3,10 +3,9 @@ from setup import init_evm, create_eosio_linked_address, deploy_erc20, deploy_st
 from bp_voting import bp_voting
 from tevmtest import CLEOSEVM
 
-def test_evm():
+def test_evm(cleosevm):
+    cleos = cleosevm
     print("\nStarting EVM test...")
-    cleos = CLEOSEVM.default()
-    cleos.w3.eth.handleRevert = True
     try:
         eosio_account = cleos.get_account("eosio")
     except Exception as e:

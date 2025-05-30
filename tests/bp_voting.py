@@ -6,7 +6,7 @@ from leap.errors import ChainAPIError
 
 from setup import DEFAULT_GAS_PRICE
 from decay import check_decay
-from tests.voting_utils import deposit_and_stake_erc20, vote_evm, producers, unstake_erc20
+from voting_utils import deposit_and_stake_erc20, vote_evm, producers, unstake_erc20
 from tevmtest import to_wei
 
 from tevmtest.utils import s2n
@@ -88,4 +88,4 @@ def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_co
     assert stake_weight == 0, f"Stake weight for {first_address} is not 0 after unstaking"
 
     user_vote = manager_contract.functions.userVotes(first_address.address).call()
-    assert user_vote[0] == 0, f"Vote weight for {first_address} is not 0 after voting for []"
+    assert user_vote == 0, f"Vote weight for {first_address} is not 0 after voting for []"
