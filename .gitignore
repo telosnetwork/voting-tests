@@ -1,2 +1,8 @@
 **/__pycache__
 .idea
+
+tests/contracts/eosio.msig/
+tests/contracts/eosio.system/
+tests/contracts/eosio.token/
+tests/contracts/eosio.wrap/
+tests/contracts/telos.decide/
