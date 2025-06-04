@@ -4,7 +4,6 @@ from time import sleep
 from antelope_rs.antelope_rs import Name
 from leap.errors import ChainAPIError
 
-from setup import DEFAULT_GAS_PRICE
 from decay import check_decay
 from voting_utils import deposit_and_stake_erc20, vote_evm, producers, unstake_erc20
 from tevmtest import to_wei
@@ -17,7 +16,7 @@ def bp_voting(cleos, native_account, first_address, second_address, erc20_contra
     """
     cleos.logger.info("\nStarting BP voting test...")
     create_and_register(cleos)
-    register_bps_evm(cleos, first_address, manager_contract)
+    register_bps_evm(cleos, native_account, first_address, manager_contract)
     sleep(1)
     do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_contract, manager_contract)
     check_decay(cleos, native_account, first_address, erc20_contract, stlos_contract, manager_contract)
@@ -41,16 +40,25 @@ def create_and_register(cleos):
         )
         cleos.logger.info(f"BP {bp_name} registered")
 
-def register_bps_evm(cleos, deployer_addr, manager_contract):
+def register_bps_evm(cleos, native_account, deployer_addr, manager_contract):
     for producer in producers:
-        register_bp_evm(cleos, deployer_addr, manager_contract, producer)
+        register_bp_evm(cleos, native_account, deployer_addr, manager_contract, producer)
 
-def register_bp_evm(cleos, deployer_addr, manager_contract, producer):
+def register_bp_evm(cleos, native_account, deployer_addr, manager_contract, producer):
     cleos.logger.info(f"Registering {producer} to EVM...")
     producer_name = Name.from_str(producer)
     producer_u64 = producer_name.value()
-    register_bp_fn = manager_contract.functions.registerBP(producer_u64)
-    register_bp_receipt = cleos.eth_build_and_send_transaction(register_bp_fn, deployer_addr, 100000, DEFAULT_GAS_PRICE)
+    # register_bp_fn = manager_contract.functions.registerBP(producer_u64)
+    # register_bp_receipt = cleos.eth_build_and_send_transaction(register_bp_fn, deployer_addr, 100000, DEFAULT_GAS_PRICE)
+    sync_bp_result = cleos.push_action(
+        'eosio',
+        'setbpevmstat',
+        [producer_name],
+        actor=native_account,
+        key=cleos.get_private_key(native_account),
+    )
+    sleep(1)
+
     is_active = manager_contract.functions.activeBPs(producer_u64).call()
     if not is_active:
         raise Exception(f"Producer {producer} is not active after registration")
@@ -88,4 +96,5 @@ def do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_co
     assert stake_weight == 0, f"Stake weight for {first_address} is not 0 after unstaking"
 
     user_vote = manager_contract.functions.userVotes(first_address.address).call()
-    assert user_vote == 0, f"Vote weight for {first_address} is not 0 after voting for []"
+    assert user_vote[0] == 0, f"Vote weight for {first_address} is not 0 after voting for []"
+    assert user_vote[1] == 0, f"BP count for {first_address} is not 0 after voting for []"

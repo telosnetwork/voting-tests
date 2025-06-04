@@ -27,8 +27,8 @@ def test_evm(cleosevm):
     cleos.logger.info(f"manager contract address: {manager_contract.address}")
 
     # TODO: Uncomment this once we can sync BPs to EVM via eosio contract
-    # set_evm_owner(cleos, manager_contract, eth_address1, eosio_evm_address)
-    # cleos.logger.info(f"Set EVM owner to {eosio_evm_address}")
+    set_evm_owner(cleos, manager_contract, eth_address1, eosio_evm_address)
+    cleos.logger.info(f"Set EVM owner to {eosio_evm_address}")
 
     update_system_contract(cleos)
 
