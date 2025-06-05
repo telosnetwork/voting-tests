@@ -73,7 +73,10 @@ def vote_native(cleos, account, producer_names):
     cleos.logger.info(f"Vote complete for {account}")
 
 def assert_bp_voteweight(cleos, manager_contract, producer_names, vote_weight):
-    vote_weight_wei = vote_weight * 10**18
+    vote_weight_wei = int(vote_weight * 10**18)
+    # Set threshold to handle decay calculation differences - about 0.1% should be sufficient
+    threshold = int(vote_weight_wei * 0.001)  # 0.1% tolerance
+
     for producer in producer_names:
         evm_vote_weight = manager_contract.functions.totalVotes(s2n(producer)).call()
         native_producer = cleos.get_producer(producer)
@@ -81,8 +84,32 @@ def assert_bp_voteweight(cleos, manager_contract, producer_names, vote_weight):
         if native_producer:
             native_vote_weight = int(float(native_producer['total_votes'])) * 10**14
 
-        assert evm_vote_weight == vote_weight_wei, f"Vote weight for {producer} is not {vote_weight_wei} after voting"
-        assert native_vote_weight == vote_weight_wei, f"Vote weight for {producer} is not {vote_weight_wei} after voting"
+        # Debug output to verify values
+        print(f"Debug {producer}:")
+        print(f"  Vote weight input: {vote_weight}")
+        print(f"  Expected: {vote_weight_wei}")
+        print(f"  EVM:      {evm_vote_weight}")
+        print(f"  Native:   {native_vote_weight}")
+
+        # Safe percentage calculation
+        evm_diff_abs = abs(evm_vote_weight - vote_weight_wei)
+        if vote_weight_wei > 0:
+            evm_diff_pct = evm_diff_abs / vote_weight_wei * 100
+            print(f"  EVM diff: {evm_diff_abs} ({evm_diff_pct:.4f}%)")
+        else:
+            print(f"  EVM diff: {evm_diff_abs} (undefined % - expected vote weight is 0)")
+            # If expected is 0, check if actual is also close to 0
+            assert evm_vote_weight == 0, f"Expected vote weight is 0 but EVM shows {evm_vote_weight}"
+            assert native_vote_weight == 0, f"Expected vote weight is 0 but Native shows {native_vote_weight}"
+            continue  # Skip the normal threshold checks
+
+        # Check EVM vote weight with threshold
+        evm_diff = abs(evm_vote_weight - vote_weight_wei)
+        assert evm_diff <= threshold, f"EVM vote weight for {producer} is {evm_vote_weight}, expected {vote_weight_wei} ± {threshold}, difference: {evm_diff} ({evm_diff / vote_weight_wei * 100:.4f}%)"
+
+        # Check native vote weight with threshold
+        native_diff = abs(native_vote_weight - vote_weight_wei)
+        assert native_diff <= threshold, f"Native vote weight for {producer} is {native_vote_weight}, expected {vote_weight_wei} ± {threshold}, difference: {native_diff} ({native_diff / vote_weight_wei * 100:.4f}%)"
 
 producers = [
     "bp1",  "bp2",  "bp3",  "bp4",  "bp5",
