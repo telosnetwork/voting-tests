@@ -72,6 +72,24 @@ def vote_native(cleos, account, producer_names):
     cleos.vote_producers(account, '', sorted(producer_names));
     cleos.logger.info(f"Vote complete for {account}")
 
+def get_native_account_vote_weight(cleos, voter):
+    voter = cleos.get_table(
+        'eosio', 'eosio', 'voters',
+        lower_bound=voter,
+        upper_bound=voter
+    )
+    return int(float(voter[0]['last_vote_weight'])) * 10**14 if voter and len(voter) > 0 else 0
+
+def get_evm_account_vote_weight(cleos, manager_contract, address):
+    user_vote = manager_contract.functions.userVotes(address).call()
+    if user_vote:
+        vote_weight = user_vote[0]
+    else:
+        vote_weight = 0
+
+    cleos.logger.info(f"EVM account {address} has vote weight: {vote_weight}")
+    return vote_weight  # in wei (10^18 units) for consistency with EVM calculations
+
 def assert_bp_voteweight(cleos, manager_contract, producer_names, vote_weight):
     vote_weight_wei = int(vote_weight * 10**18)
     # Set threshold to handle decay calculation differences - about 0.1% should be sufficient

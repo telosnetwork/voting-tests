@@ -2,8 +2,9 @@ import time
 from antelope_rs.antelope_rs import Asset
 from eth_account import Account
 
+from tests.voting_utils import get_native_account_vote_weight
 from voting_utils import deposit_and_stake_erc20, vote_evm, vote_native, producers, stake_erc20, \
-    assert_bp_voteweight
+    assert_bp_voteweight, get_evm_account_vote_weight
 from tevmtest import to_wei, DEFAULT_GAS_PRICE
 from tevmtest.utils import s2n
 
@@ -25,12 +26,26 @@ def check_decay(cleos, native_funder, evm_funder, erc20_contract, stlos_contract
 
     # Vote for 30 producers in EVM and native with second account, same amount
     vote(cleos, bob_evm, bob_native, manager_contract, producer_names)
+
+    # Check that the votes in native and EVM are as expected, this allows .1% variance
     assert_bp_voteweight(cleos, manager_contract, producer_names, amount + (amount * 1.15))
 
-
-    # Check that the votes are the same in both contracts
     # Check that the votes of second account are greater than the first account from before decay values were set
+    alice_evm_weight = get_evm_account_vote_weight(cleos, manager_contract, alice_evm.address)
+    alice_native_weight = get_native_account_vote_weight(cleos, alice_native)
+
+    assert alice_native_weight == alice_evm_weight == amount * 10**18
+
+    bob_evm_weight = get_evm_account_vote_weight(cleos, manager_contract, bob_evm.address)
+    bob_native_weight = get_native_account_vote_weight(cleos, bob_native)
+
+    assert alice_native_weight * 1.14 < bob_native_weight
+    assert alice_evm_weight * 1.14 < bob_evm_weight
+
     # Reset votes to 0
+    vote(cleos, alice_evm, alice_native, manager_contract, [])
+    vote(cleos, bob_evm, bob_native, manager_contract, [])
+    assert_bp_voteweight(cleos, manager_contract, producer_names, 0)
 
 # Return tuple of native_account, evm_address, also transferring some TLOS to each
 def create_voters(cleos, native_funder, evm_funder, erc20_contract, stlos_contract, manager_contract, amount=1_000_000):
