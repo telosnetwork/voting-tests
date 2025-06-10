@@ -5,6 +5,7 @@ from antelope_rs.antelope_rs import Name
 from leap.errors import ChainAPIError
 
 from decay import check_decay
+from self_stake_boost import check_self_stake_boost
 from voting_utils import deposit_and_stake_erc20, vote_evm, producers, unstake_erc20
 from tevmtest import to_wei
 
@@ -20,6 +21,7 @@ def bp_voting(cleos, native_account, first_address, second_address, erc20_contra
     sleep(1)
     do_evm_voting(cleos, first_address, second_address, erc20_contract, stlos_contract, manager_contract)
     check_decay(cleos, native_account, first_address, erc20_contract, stlos_contract, manager_contract)
+    check_self_stake_boost(cleos, native_account, manager_contract)
 
 def create_and_register(cleos):
     for bp_name in producers:
