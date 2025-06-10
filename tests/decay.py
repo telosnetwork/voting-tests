@@ -2,7 +2,7 @@ import time
 from antelope_rs.antelope_rs import Asset
 from eth_account import Account
 
-from tests.voting_utils import get_native_account_vote_weight
+from voting_utils import get_native_account_vote_weight
 from voting_utils import deposit_and_stake_erc20, vote_evm, vote_native, producers, stake_erc20, \
     assert_bp_voteweight, get_evm_account_vote_weight
 from tevmtest import to_wei, DEFAULT_GAS_PRICE
